@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+@layer base {
+    html {
+        @apply text-primary-700;
+    }
+    /* a {
+        @apply text-primary-700;
+        @apply hover:text-primary-400;
+        @apply cursor-pointer;
+    } */
+    p {
+        @apply font-piazolla;
+        @apply text-primary-600;
+        @apply font-medium;
+    }
+    h1 {
+        @apply text-primary-700;
+        @apply font-bold;
+        @apply text-4xl;
+        @apply sm:text-5xl;
+    }
+    h2 {
+        @apply text-3xl;
+        @apply sm:text-4xl;
+        @apply font-bold;
+    }
+    h3 {
+        @apply text-2xl;
+        @apply sm:text-3xl;
+        @apply font-bold;
+    }
+    h4 {
+        @apply text-xl;
+        @apply sm:text-2xl;
+        @apply font-bold;
+    }
+    h5 {
+        @apply text-lg;
+        @apply sm:text-xl;
+        @apply font-bold;
+    }
+    h6 {
+        @apply text-base;
+        @apply sm:text-lg;
+        @apply font-bold;
+    }
+}
+
+@font-face {
+    font-family: "Displace2";
+    src: url("../fonts/font.woff2") format("woff2"),
+        url("../fonts/font.woff") format("woff");
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Displace2";
+    src: url("../fonts/displaceMedium.woff2") format("woff2"),
+        url("../fonts/displaceMedium.woff") format("woff"),
+        url("../fonts/displaceMedium.eot") format("eot");
+    font-weight: medium;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Quicksand";
+    src: url("../fonts/quicksand-regular.woff2") format("woff2"),
+        url("../fonts/quicksand-regular.woff") format("woff"),
+        url("../fonts/quicksand-regular.eot") format("eot"),
+        url("../fonts/quicksand-regular.svg") format("svg");
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Quicksand";
+    src: url("../fonts/Quicksand-Medium.woff") format("woff"),
+        url("../fonts/Quicksand-Medium.woff2") format("woff2"),
+        url("../fonts/Quicksand-Medium.eot") format("eot");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Piazolla";
+    src: url("../fonts/Piazzolla-Medium.ttf") format("ttf"),
+        url("../fonts/Piazzolla-Medium.woff2") format("woff2"),
+        url("../fonts/Piazzolla-Medium.otf") format("otf");
+    font-weight: 500;
+    font-style: normal;
+}
+
+
+
+@keyframes slideInBottom {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+.slide-in-bottom-enter-active {
+    animation: slideInBottom 0.5s ease-out forwards;
+  }
+  
+  .slide-in-bottom-leave-active {
+    animation: slideOutBottom 0.5s ease-out forwards;
+  }
+
+/* Hero section slidshow */
+.aspect-ratio-box {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 110%;
+}
+
+.aspect-ratio-horizontal {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 75%;
+}
+
+.aspect-ratio-horizontal-inside {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.aspect-ratio-box-inside {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.heroSlideshow-enter, .list-group-leave-to {
+    opacity: 0;
+    transition: all 300ms ease-in-out;
+  }
+  
+  .heroSlideshow-leave-active {
+    opacity: 0;
+    transition-delay: 1s;
+  }
+  
+  .heroSlideshow-enter-active {
+    transition: opacity 300ms ease-in, transform 400ms ease-in-out;
+  }
+  
+  .heroSlideshow-enter-from {
+    opacity: 0;
+
+
+  }
+  
+  .heroSlideshow-enter-to {
+    opacity: 1;
+  }
+
+  .tab {
+    position: relative;
+    /* other styles... */
+}
+
+.indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: #2A2622;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s ease;
+}
+
+.tab.active .indicator {
+    transform: scaleX(1);
+}
