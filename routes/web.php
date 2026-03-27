@@ -317,6 +317,7 @@ Route::post('/contact', function (Request $request) {
     Notification::route('mail', [
         'jevgeni@hausers.ee' => 'Jevgeni Lipin',
         'andra@hausers.ee' => 'Andra',
+        'ristotoldsep@gmail.com' => 'Risto Toldsep',
     ])->notify(new ContactFormSubmission($request->all(), $previous));
 
     return redirect()->back()->with('success', 'You have been subscribed!');

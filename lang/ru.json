@@ -190,6 +190,8 @@
 
   "Finantseerimine": "Финансирование",
   "Kui kaasate kodu ostmiseks laenu, siis soovitame alustada laenuvõimalusi kaardistada enne või hiljemalt broneerimise ajal. Laenuleping on võimalik sõlmida etteulatuvalt, ehituse ajal või paar kuud enne hoone valmimist. Kusjuures laenu tagasimaksmine algab alles pärast laenusumma väljamaksmist, mis toimub pärast korteri valmimist asjaõiguslepingu sõlmimisega.": "Если  для покупки жилья Вы планируете привлечь финансирование от банка, мы рекомендуем изучить варианты кредитования до момента или во время бронирования квартиры. Кредитный договор можно заключить заранее, во время строительства или за несколько месяцев до завершения строительства здания. При этом ежемесячная оплата кредита начинается только после выплаты кредитной суммы, которая производится после завершения квартиры и заключения договора вещного права.",
+  "Kampaania": "Акция",
+  "Piiratud aja pakkumisena saavad korteriostjad panipaiga tasuta! Pakkumine kehtib vaid eluruumi korteritele. Rohkem infot müügiesindajatelt.": "В рамках ограниченного по времени предложения покупатели квартир получают кладовую бесплатно! Предложение распространяется только на жилые квартиры. Подробнее у представителей по продажам.",
   "Koduvahetus": "Обмен жилья",
   "Kui rahastad uue kodu ostu oma vana kodu müügist, siis tasub protsessi kaasata oma ala professionaalid. Vajadusel suuname oma koostööpartnerite juurde, kus kinnisvaramaakler aitab hinnata teie vara väärtust, eeldatavat müügiperioodi ning millal müügiga alustada, et hiljemalt uue kodu valmimiseks oleks vana müüdud.": "Если Вы финансируете покупку нового жилья за счёт продажи старого, то рекомендуем продумать действия и при продажи имеющейся квартиры привлечь специалистов. При необходимости мы направим Вас к нашим партнёрам, где агент по недвижимости поможет оценить стоимость вашего имущества, предполагаемый срок продажи и определить, когда лучше всего начать продажу, чтобы к моменту завершения строительства нового жилья старое уже было продано.",
 
@@ -213,10 +215,8 @@
   "* Korteriomandid 1-10 on külaliskorterid": "* Квартиры 1-10 являются гостевыми квартирами",
   "Tegemist on külaliskorteriga. Küsi lisa!": "Это гостевая квартира. Узнайте больше!",
   "Saha tee 8 ühendab endas meeldiva elukeskkonna ja väikekoha ärikeskkonna. Hoone pakub võimalusi kontoripindadele, väikepoodidele, kohvikutele, restoranidele ja muudele lisandväärtust loovatele teenustele. Äripinnad on saadaval suuruses 48 m²-140 m².": "По плану местного самоуправления в здании разместятся центр семейного врача и медицинский центр, которые будут расположены в стороне здания с отдельной лестницей, а также детский сад, который займёт отдельную секцию во внутреннем дворе. Saha tee 8 объединяет в себе комфортную жилую среду и деловую атмосферу маленького городка. Здание предлагает возможности для офисов, небольших магазинов, кафе, ресторанов и других услуг, создавая дополнительные ценности. Коммерческие помещения доступны площадью от 48 м² до 140 м².",
-  "Kampaania! Kodud kuni 8 000€ allahindlusega!": "Акция! Квартиры со скидкой до 8 000€!",
   "Tasu tehnovõrkude (elektri-, vee- ja kanalisatsioonitrasside) rajamise ning nendega liitumise eest;": "Строительство и подключение технических сетей (электричество, вода, канализация);",
   "Käibemaks;": "НДС;",
-  "Valitud korteritel erihinnad": "Специальные цены на выбранные квартиры",
-  "Kampaania! Kodud kuni 8 000€ allahindlusega! Pakkumine kehtib kuni 28.02.2026.": "Акция! Квартиры со скидкой до 8 000€! Предложение действительно до 28.02.2026.",
-  "Siseviimistluspakettide lisatasu valikud;": "Дополнительные варианты пакетов внутренней отделки;"
+  "Siseviimistluspakettide lisatasu valikud;": "Дополнительные варианты пакетов внутренней отделки;",
+  "Limiteeritud aja pakkumisena panipaik TASUTA! *Kehtib eluruumi korteritele": "Подарок ограниченного времени - кладовое помещение БЕСПЛАТНО! *Применяется только к жилым квартирам"
 }

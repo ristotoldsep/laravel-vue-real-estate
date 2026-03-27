@@ -39,7 +39,7 @@
     <div class="bg-primary-700">
       <div class="banner-wrapper mx-auto px-5 py-2">
         <p class="marquee text-sm uppercase text-primary-100 text-center">
-          {{$t('Kampaania! Kodud kuni 8 000€ allahindlusega!')}}
+          {{$t('Limiteeritud aja pakkumisena panipaik TASUTA! *Kehtib eluruumi korteritele')}}
         </p>
       </div>
     </div>

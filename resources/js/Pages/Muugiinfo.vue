@@ -169,11 +169,11 @@
               </svg>
             </span>
             <h3 class="flex items-center mb-1 text-lg font-semibold text-primary-800">
-              {{$t('Valitud korteritel erihinnad')}}
+              {{$t('Kampaania')}}
             </h3>
 
             <p class="mb-4 text-base font-medium text-primary-600">
-              {{$t('Kampaania! Kodud kuni 8 000€ allahindlusega! Pakkumine kehtib kuni 28.02.2026.')}}
+              {{$t('Piiratud aja pakkumisena saavad korteriostjad panipaiga tasuta! Pakkumine kehtib vaid eluruumi korteritele. Rohkem infot müügiesindajatelt.')}}
             </p>
           </li>
         </ol>
