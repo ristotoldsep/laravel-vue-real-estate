@@ -152,30 +152,6 @@
               {{$t('Kui rahastad uue kodu ostu oma vana kodu müügist, siis tasub protsessi kaasata oma ala professionaalid. Vajadusel suuname oma koostööpartnerite juurde, kus kinnisvaramaakler aitab hinnata teie vara väärtust, eeldatavat müügiperioodi ning millal müügiga alustada, et hiljemalt uue kodu valmimiseks oleks vana müüdud.')}}
             </p>
           </li>
-          <li class="mb-10 ms-8">
-            <span
-              class="absolute flex items-center justify-center w-6 h-6 bg-primary-300 rounded-full -start-3 ring-8 ring-primary-100"
-            >
-              <svg
-                class="w-2.5 h-2.5 text-primary-600"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"
-                />
-              </svg>
-            </span>
-            <h3 class="flex items-center mb-1 text-lg font-semibold text-primary-800">
-              {{$t('Kampaania')}}
-            </h3>
-
-            <p class="mb-4 text-base font-medium text-primary-600">
-              {{$t('Piiratud aja pakkumisena saavad korteriostjad panipaiga tasuta! Pakkumine kehtib vaid eluruumi korteritele. Rohkem infot müügiesindajatelt.')}}
-            </p>
-          </li>
         </ol>
       </div>
     </section>
