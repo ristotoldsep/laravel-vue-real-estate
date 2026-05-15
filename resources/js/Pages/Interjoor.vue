@@ -107,6 +107,48 @@ const tilesIII = ref([
             :tiles="tilesIII"
             pdfFile="pakett-3/pakett-3.pdf"
         />
+
+        <!-- Koostööpartnerid -->
+        <section class="border-b border-primary-100 py-10 sm:py-20 px-3 xl:px-0">
+            <div class="mx-auto max-w-screen-xl">
+                <div class="mb-10 sm:mb-14">
+                    <p class="uppercase text-xs tracking-widest text-primary-300 mb-3">{{ $t('Koostöö') }}</p>
+                    <h2>{{ $t('Meie partnerid') }}</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                    <!-- Aunman -->
+                    <div class="border border-primary-100 p-10 sm:p-14 flex flex-col gap-8 transition-colors duration-300 hover:border-primary-200">
+                        <img
+                            src="/images/partnerid/aunman-logo.webp"
+                            alt="Aunman"
+                            class="h-14 w-auto object-contain object-left"
+                        />
+                        <p class="text-primary-500 leading-relaxed">
+                            {{ $t('Aunman on Eesti pereettevõte, mis loob eksklusiivset eritellimusmööblit juba 20 aastat. Pakume personaalset teenindust, disaineri abil reaalajas jälgitavat tootmist ja 5-aastast garantiid. Meie Viljandis asuv tehas tagab kvaliteedi ja täpsuse igas detailis. Loome koos Sinuga unistuste kodu.') }}
+                        </p>
+                    </div>
+                    <!-- Architype Estonia + Hansakivi -->
+                    <div class="border border-primary-100 p-10 sm:p-14 flex flex-col gap-8 transition-colors duration-300 hover:border-primary-200">
+                        <div class="flex flex-col gap-6">
+                            <img
+                                src="/images/partnerid/architype-logo.svg"
+                                alt="Architype Estonia"
+                                class="h-9 w-auto object-contain object-left"
+                            />
+                            <img
+                                src="/images/partnerid/hansakivi-logo.webp"
+                                alt="Hansakivi"
+                                class="h-10 w-auto object-contain object-left"
+                            />
+                        </div>
+                        <p class="text-primary-500 leading-relaxed">
+                            {{ $t('Kvaliteetsed pinnamaterjalid tänapäevasesse interjööri.') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <Kontaktivorm />
     </GuestLayout>
 </template>
