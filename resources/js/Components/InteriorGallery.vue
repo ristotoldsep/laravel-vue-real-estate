@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch, onUnmounted } from "vue";
 import "@splidejs/vue-splide/css/core";
 import { Head, Link } from "@inertiajs/vue3";
 import { useI18n } from 'vue-i18n'
@@ -56,22 +56,23 @@ const mainOptions = {
     perMove: 1,
     gap: "1rem",
     pagination: false,
-    arrows: false,
+    arrows: true,
 };
 
 const thumbsOptions = {
     type: "slide",
     rewind: true,
-    gap: "10",
+    gap: "0.75rem",
     pagination: false,
-    fixedWidth: 110,
-    fixedHeight: 70,
+    fixedWidth: 90,
+    fixedHeight: 60,
     cover: true,
     focus: "center",
     isNavigation: true,
     updateOnMove: true,
     arrows: false,
     snap: true,
+    drag: true,
 };
 
 const onThumbsReady = () => {
@@ -86,8 +87,6 @@ const onThumbsReady = () => {
 const currentThumbnail = ref(0);
 
 const clickImage = (image, index) => {
-    if (isMobile()) return;
-
     currentThumbnail.value = index;
     visible.value = true;
     setTimeout(() => {
@@ -99,29 +98,37 @@ const onGalleryMove = (index, prev, dest) => {
     currentThumbnail.value = prev;
 };
 
-const isMobile = () => {
-    if (
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-            navigator.userAgent
-        )
-    ) {
-        return true;
-    } else {
-        return false;
-    }
+const onKeydown = (e) => {
+    if (e.key === "ArrowLeft") main.value?.go("<");
+    else if (e.key === "ArrowRight") main.value?.go(">");
 };
+
+watch(visible, (open) => {
+    if (open) window.addEventListener("keydown", onKeydown);
+    else window.removeEventListener("keydown", onKeydown);
+});
+
+onUnmounted(() => window.removeEventListener("keydown", onKeydown));
+
 </script>
 
 <template>
-    <Dialog v-model:visible="visible" modal dismissableMask header="Galerii">
+    <Dialog
+        v-model:visible="visible"
+        modal
+        dismissableMask
+        header="Galerii"
+        :style="{ width: '95vw', maxWidth: '1000px' }"
+    >
         <Splide
             aria-labelledby="uusloo-gallery"
             :options="mainOptions"
             ref="main"
+            class="lightbox-main"
             @splide:move="onGalleryMove"
         >
-            <SplideSlide v-for="slide in images" :key="slide.alt">
-                <img :src="slide" :alt="slide.alt" />
+            <SplideSlide v-for="(slide, index) in images" :key="index">
+                <img :src="slide.src" :alt="slide.title" />
             </SplideSlide>
         </Splide>
 
@@ -130,20 +137,10 @@ const isMobile = () => {
             :options="thumbsOptions"
             ref="thumbs"
             @splide:mounted="onThumbsReady"
-            class="mt-2 flex justify-center"
+            class="lightbox-thumbs mt-3 flex justify-center"
         >
-            <SplideSlide
-                v-for="(slide, index) in images"
-                :key="slide.alt"
-                class="cursor-pointer"
-                @click="currentThumbnail = index"
-            >
-                <div
-                    class="p-1"
-                    :class="{ 'bg-primary-400': index === currentThumbnail }"
-                >
-                    <img :src="slide" :alt="slide.alt" />
-                </div>
+            <SplideSlide v-for="(slide, index) in images" :key="index">
+                <img :src="slide.src" :alt="slide.title" />
             </SplideSlide>
         </Splide>
     </Dialog>

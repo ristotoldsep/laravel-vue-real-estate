@@ -2,8 +2,9 @@
   import { Head, useForm } from '@inertiajs/vue3'
   import GuestLayout from '@/Layouts/GuestLayout.vue'
   import { useToast } from 'primevue/usetoast'
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, watch, onUnmounted } from 'vue'
   import { useI18n } from 'vue-i18n'
+  import '@splidejs/vue-splide/css/core'
 
   const { t } = useI18n()
 
@@ -16,7 +17,66 @@
       type: Object,
       required: true,
     },
+    gallery: {
+      type: Array,
+      default: () => [],
+    },
   })
+
+  // Gallery lightbox
+  const visible = ref(false)
+  const main = ref(null)
+  const thumbs = ref(null)
+
+  const mainOptions = {
+    perPage: 1,
+    perMove: 1,
+    gap: '1rem',
+    pagination: false,
+    arrows: true,
+  }
+
+  const thumbsOptions = {
+    type: 'slide',
+    rewind: true,
+    gap: '0.75rem',
+    pagination: false,
+    fixedWidth: 90,
+    fixedHeight: 60,
+    cover: true,
+    focus: 'center',
+    isNavigation: true,
+    updateOnMove: true,
+    arrows: false,
+    snap: true,
+    drag: true,
+  }
+
+  const onThumbsReady = () => {
+    const thumbsSplide = thumbs.value?.splide
+    if (thumbsSplide) {
+      main.value?.sync(thumbsSplide)
+    }
+  }
+
+  const openLightbox = (index) => {
+    visible.value = true
+    setTimeout(() => {
+      main.value?.go(index)
+    }, 300)
+  }
+
+  const onKeydown = (e) => {
+    if (e.key === 'ArrowLeft') main.value?.go('<')
+    else if (e.key === 'ArrowRight') main.value?.go('>')
+  }
+
+  watch(visible, (open) => {
+    if (open) window.addEventListener('keydown', onKeydown)
+    else window.removeEventListener('keydown', onKeydown)
+  })
+
+  onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
   const formatCurrency = (value) => {
     if (value === null || value === undefined) return '-'
@@ -106,10 +166,48 @@
                 <img class="w-full max-w-[400px]" :src="images['position']" alt="" />
               </div>
             </TabPanel>
+            <TabPanel v-if="gallery && gallery.length" :header="$t('Galerii')">
+              <div class="grid grid-cols-2 gap-3 p-4">
+                <img
+                  v-for="(img, index) in gallery"
+                  :key="index"
+                  :src="img.url"
+                  alt=""
+                  class="object-cover aspect-[3/2] w-full cursor-pointer rounded transition-opacity hover:opacity-90"
+                  @click="openLightbox(index)"
+                />
+              </div>
+            </TabPanel>
           </TabView>
         </div>
       </div>
     </section>
     <Kontaktivorm />
+
+    <Dialog
+      v-model:visible="visible"
+      modal
+      dismissableMask
+      :header="$t('Galerii')"
+      :style="{ width: '95vw', maxWidth: '1000px' }"
+    >
+      <Splide :options="mainOptions" ref="main" class="lightbox-main" aria-label="Korteri galerii">
+        <SplideSlide v-for="(img, i) in gallery" :key="i">
+          <img :src="img.url" alt="" />
+        </SplideSlide>
+      </Splide>
+
+      <Splide
+        :options="thumbsOptions"
+        ref="thumbs"
+        @splide:mounted="onThumbsReady"
+        class="lightbox-thumbs mt-3 flex justify-center"
+        aria-label="Galerii pisipildid"
+      >
+        <SplideSlide v-for="(img, i) in gallery" :key="i">
+          <img :src="img.url" alt="" />
+        </SplideSlide>
+      </Splide>
+    </Dialog>
   </GuestLayout>
 </template>

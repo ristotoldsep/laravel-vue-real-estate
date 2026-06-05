@@ -1,7 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import draggable from 'vuedraggable';
 import LocalCheckbox from '@/Components/Checkbox.vue';
 import { usePrimeVue } from 'primevue/config';
 import { useToast } from "primevue/usetoast";
@@ -21,7 +22,17 @@ const props = defineProps({
     images: {
         type: Object,
         default: () => false,
+    },
+    gallery: {
+        type: Array,
+        default: () => [],
     }
+});
+
+const galleryItems = ref([...props.gallery]);
+
+watch(() => props.gallery, (val) => {
+    galleryItems.value = [...val];
 });
 
 const toFloat = (val) => (val !== null && val !== undefined && val !== '') ? parseFloat(val) : null
@@ -50,6 +61,7 @@ const totalSizePercent = ref({
   '1': 0,
   '2': 0,
   '3': 0,
+  '4': 0,
 });
 const files = ref([]);
 
@@ -73,8 +85,23 @@ const onUpload = (event, id) => {
       '1': 0,
       '2': 0,
       '3': 0,
+      '4': 0,
     };
-    router.reload({ only: ['images'] })
+    router.reload({ only: ['images', 'gallery'] })
+};
+
+const deleteGalleryImage = (id) => {
+    axios.delete(`/api/gallery/${props.apartment.id}/${id}`)
+        .then(() => {
+            router.reload({ only: ['gallery'] });
+            toast.add({ severity: 'success', summary: 'Kustutatud', detail: 'Pilt eemaldatud galeriist', life: 3000 });
+        });
+};
+
+const saveOrder = () => {
+    axios.post(`/api/gallery/${props.apartment.id}/reorder`, {
+        ids: galleryItems.value.map((i) => i.id),
+    });
 };
 
 const formatSize = (bytes) => {
@@ -288,6 +315,50 @@ const confirm1 = () => {
                             <img :src="images.position" alt="image" />
                         </template>
                     </Image>
+
+                    <Divider />
+
+                    <div>
+                      <label class="font-bold block mb-2">Galerii</label>
+                      <FileUpload
+                        mode="basic"
+                        name="file"
+                        :url="'/api/upload/gallery/' + apartment.id"
+                        accept="image/*"
+                        :multiple="true"
+                        :maxFileSize="10000000"
+                        @upload="onUpload($event, 4)"
+                        @select="onSelectedFiles"
+                        @progress="onProgress($event, 4)"
+                        :auto="true"
+                        withCredentials
+                        chooseLabel="Sirvi"
+                      />
+                      <ProgressBar v-if="totalSizePercent['4'] !== 0" :value="totalSizePercent['4']" :class="['md:w-20rem h-1rem w-full md:ml-auto', { 'exceeded-progress-bar': totalSizePercent['4'] > 100 }]"
+                          >
+                          {{ totalSizePercent['4'] === 100 ? 'Pildi töötlemine ...' : totalSizePercent['4'] + '%' }}
+                          </ProgressBar
+                      >
+                    </div>
+
+                    <draggable
+                      v-if="galleryItems.length"
+                      v-model="galleryItems"
+                      item-key="id"
+                      @end="saveOrder"
+                      class="grid grid-cols-3 gap-3"
+                    >
+                      <template #item="{ element }">
+                        <div class="relative group cursor-move">
+                          <img :src="element.url" alt="" class="object-cover aspect-square w-full rounded" />
+                          <button
+                            type="button"
+                            @click="deleteGalleryImage(element.id)"
+                            class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center leading-none"
+                          >×</button>
+                        </div>
+                      </template>
+                    </draggable>
                   </div>
               </div>
             </div>

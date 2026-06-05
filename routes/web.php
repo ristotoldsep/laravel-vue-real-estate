@@ -241,7 +241,11 @@ Route::localized(function () {
                 'apartment' => $apartment->getMedia('apartment')->first()?->getFullUrl(),
                 'floor' => $apartment->getMedia('floor')->first()?->getFullUrl(),
                 'position' => $apartment->getMedia('position')->first()?->getFullUrl(),
-            ]
+            ],
+            'gallery' => $apartment->getMedia('gallery')->map(fn ($m) => [
+                'id' => $m->id,
+                'url' => $m->getFullUrl(),
+            ])->values(),
         ]);
     })->name('korteri-detail');
 });
@@ -341,7 +345,11 @@ Route::middleware('auth')->group(function () {
                 'apartment' => $apartment->getMedia('apartment')->first()?->getFullUrl(),
                 'floor' => $apartment->getMedia('floor')->first()?->getFullUrl(),
                 'position' => $apartment->getMedia('position')->first()?->getFullUrl(),
-            ]
+            ],
+            'gallery' => $apartment->getMedia('gallery')->map(fn ($m) => [
+                'id' => $m->id,
+                'url' => $m->getFullUrl(),
+            ])->values(),
         ]);
     })->name('edit.apartment');
 

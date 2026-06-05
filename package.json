@@ -28,6 +28,7 @@
         "vue-i18n": "10",
         "vue-webp-image": "^1.0.2",
         "vue3-smooth-scroll": "^0.8.1",
+        "vuedraggable": "^4.1.0",
         "ziggy-js": "^2.4.1"
     }
 }

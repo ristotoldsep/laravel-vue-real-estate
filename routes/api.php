@@ -24,6 +24,33 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Must be registered BEFORE the generic /upload/{collection} route below,
+// otherwise that route captures collection="gallery" with the wrong rules.
+Route::post('/upload/gallery/{apartment}', function (Request $request, Apartment $apartment) {
+    $request->validate([
+        'file'   => 'required',
+        'file.*' => 'image|mimes:jpeg,png,jpg,webp,gif|max:10000000',
+    ]);
+
+    $uploaded = $request->file('file');
+    $files = is_array($uploaded) ? $uploaded : [$uploaded];
+
+    foreach ($files as $file) {
+        $contents = file_get_contents($file->getRealPath());
+        $name = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+
+        // Photo path: no blendTransparency/trim (those are for plan PNGs).
+        // Just downscale for web performance and convert to WebP.
+        $image = Image::read($contents)->scaleDown(width: 1920);
+
+        $apartment->addMediaFromString((string) $image->toWebp(80))
+            ->usingFileName($name . '_' . Str::random(6) . '.webp')
+            ->toMediaCollection('gallery'); // additive: no clearMediaCollection
+    }
+
+    return response()->json(['count' => count($files)]);
+});
+
 Route::post('/upload/{collection}/{apartment}', function (Request $request, $collection, Apartment $apartment) {
     $request->validate([
         'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2000048',
@@ -73,4 +100,35 @@ Route::post('/upload/{collection}/{apartment}', function (Request $request, $col
     }
 
     return response()->json(['path' => $croppedImage]);
+});
+
+Route::delete('/gallery/{apartment}/{media}', function (Apartment $apartment, $media) {
+    $item = $apartment->media()
+        ->where('collection_name', 'gallery')
+        ->where('id', $media)
+        ->firstOrFail();
+
+    $item->delete();
+
+    return response()->json(['deleted' => true]);
+});
+
+Route::post('/gallery/{apartment}/reorder', function (Request $request, Apartment $apartment) {
+    $ids = $request->validate([
+        'ids'   => 'required|array',
+        'ids.*' => 'integer',
+    ])['ids'];
+
+    // Only allow reordering this apartment's gallery media.
+    $valid = $apartment->media()
+        ->where('collection_name', 'gallery')
+        ->whereIn('id', $ids)
+        ->pluck('id')
+        ->all();
+
+    $ordered = array_values(array_filter($ids, fn ($id) => in_array($id, $valid)));
+
+    \Spatie\MediaLibrary\MediaCollections\Models\Media::setNewOrder($ordered);
+
+    return response()->json(['ok' => true]);
 });
