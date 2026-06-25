@@ -120,8 +120,8 @@
       if (apartment.hidden) return false
 
       if (!checked.value) {
-        // Filter apartments with status === null
-        if (apartment.status !== null) {
+        // Show available apartments (status === null) and "Naabrist Parem" ones
+        if (apartment.status !== null && apartment.status !== 'Naabrist Parem') {
           return false
         }
       }
