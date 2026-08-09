@@ -39,7 +39,7 @@
     <div class="bg-primary-700">
       <div class="banner-wrapper mx-auto px-5 py-2">
         <p class="marquee text-sm uppercase text-primary-100 text-center">
-          {{$t('NÄIDISKORTER ON VALMIS!')}}
+          {{$t('SAADAVAL VIIMASED KORTERID!')}}
         </p>
       </div>
     </div>
@@ -47,7 +47,7 @@
     <div class="border-b border-primary-100">
       <!-- Mobile top bar -->
       <div class="lg:hidden flex justify-between py-3 px-3 bg-primary-100">
-        <a href="tel:+372 5307 0330" class="flex items-center gap-2">
+        <a href="tel:+37253070330" class="flex items-center gap-2">
           <svg
             width="18"
             height="18"
@@ -102,7 +102,7 @@
         </a>
       </div>
       <div class="py-5 justify-between px-5 flex max-w-screen-xl mx-auto">
-        <a href="tel:+37253070330" class="items-center gap-2 hidden lg:flex">
+        <a href="tel:+37253070330" class="items-center gap-2 hidden lg:flex lg:flex-1">
           <svg
             width="18"
             height="18"
@@ -158,7 +158,7 @@
           </svg>
         </Link>
 
-        <div class="flex gap-10 items-center">
+        <div class="flex gap-10 items-center lg:flex-1 lg:justify-end">
           <div class="flex gap-5 font-piazolla text-sm font-medium">
             <a
               href="https://maps.app.goo.gl/9Uzo5UfJE8w65bxS9"

@@ -73,6 +73,12 @@ const showingNavigationDropdown = ref(false);
                                 >
                                     Hinnad & plaanid
                                 </NavLink>
+                                <NavLink
+                                    :href="route('admin.gallery')"
+                                    :active="route().current('admin.gallery')"
+                                >
+                                    Galerii
+                                </NavLink>
                             </div>
                         </div>
 
@@ -174,6 +180,12 @@ const showingNavigationDropdown = ref(false);
                             :active="route().current('dashboard')"
                         >
                             Hinnad & plaanid
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('admin.gallery')"
+                            :active="route().current('admin.gallery')"
+                        >
+                            Galerii
                         </ResponsiveNavLink>
                     </div>
 

@@ -1,63 +1,30 @@
 <script setup>
   import { Link } from '@inertiajs/vue3'
-  import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
+  import { ref, computed, onMounted, watch, onUnmounted, nextTick } from 'vue'
 import '@splidejs/vue-splide/css/core'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
-  const activeTab = ref('Hoonest')
+const { locale } = useI18n()
+
+  // Categories and their images are managed from the admin panel (Galerii).
+  const props = defineProps({
+    categories: { type: Array, default: () => [] },
+  })
+
+  const activeIndex = ref(0)
 
   const currentImageIndex = ref(0)
-  const imagesHoonest = ref([
-    '/images/renderid/saha-8_c1.webp',
-    '/images/renderid/saha-8_c2.webp',
-    '/images/renderid/saha-8_c7.webp',
-    '/images/renderid/saha-8_c3.webp',
-    '/images/renderid/saha-8_c7.webp',
-    '/images/renderid/saha-8_c8.webp',
-    '/images/renderid/saha-8_c9.webp',
-    '/images/renderid/saha-8_c10.webp',
-  ])
 
-  const imagesUmbruskond = ref([
-    '/images/umbruskond/loo-alevik1.webp',
-    '/images/umbruskond/loo-alevik2.webp',
-    '/images/umbruskond/loo-alevik3.webp',
-    '/images/umbruskond/loo-alevik4.webp',
-    '/images/umbruskond/loo-alevik5.webp',
-    '/images/umbruskond/loo-alevik6.webp',
-    '/images/umbruskond/loo-alevik7.webp',
-  ])
+  // A category deleted in the admin can leave activeIndex out of range.
+  const activeCategory = computed(
+    () => props.categories[activeIndex.value] ?? props.categories[0] ?? null
+  )
 
-  const imagesInterior = ref([
-    '/images/interjoor/saha-8-elutuba.webp',
-    '/images/interjoor/saha-8-elutuba-2.webp',
-    '/images/interjoor/saha-8-kook.webp',
-      '/images/interjoor/saha-8-vannituba.webp',
-    '/images/interjoor/saha-8-elutuba-3.webp',
-    '/images/interjoor/saha-8-rodu.webp',
-    '/images/interjoor/saha-8-fuajee.webp',
-  ])
+  const categoryName = (category) => {
+    const name = category?.name ?? {}
 
-  const imagesEhitus = ref([
-    '/images/renderid/saha_main.webp',
-    '/images/ehitus/ehitus-1.webp',
-    '/images/ehitus/ehitus-16.webp',
-    '/images/ehitus/ehitus-17.webp',
-    '/images/ehitus/ehitus-2.webp',
-    '/images/ehitus/ehitus-4.webp',
-    '/images/ehitus/ehitus-5.webp',
-    '/images/ehitus/ehitus-6.webp',
-    '/images/ehitus/ehitus-7.webp',
-    '/images/ehitus/ehitus-8.webp',
-    '/images/ehitus/ehitus-9.webp',
-    '/images/ehitus/ehitus-10.webp',
-    '/images/ehitus/ehitus-11.webp',
-    '/images/ehitus/ehitus-12.webp',
-    '/images/ehitus/ehitus-13.webp',
-    '/images/ehitus/ehitus-14.webp',
-    '/images/ehitus/ehitus-15.webp',
-  ])
+    return name[locale.value] || name.et || ''
+  }
 
   const perPage = ref(3)
   const totalImages = ref(1)
@@ -69,27 +36,17 @@ const { t } = useI18n()
   const pages = computed(() => {
     if (karusell.value === null) return 1
 
-    return Math.ceil(activeImages.value.length / perPage.value)
+    return Math.max(1, Math.ceil(activeImages.value.length / perPage.value))
   })
 
-  const activeImages = computed(() => {
-    if (activeTab.value === 'Hoonest') {
-      return imagesHoonest.value
-    } else if (activeTab.value === 'Interior') {
-      return imagesInterior.value
-    } else if (activeTab.value === 'Ehitus') {
-      return imagesEhitus.value
-    } else {
-      return imagesUmbruskond.value
-    }
-  })
+  const activeImages = computed(() => activeCategory.value?.images ?? [])
 
   const nextImage = (event) => {
-    karusell.value.go('+' + perPage.value)
+    karusell.value?.go('+' + perPage.value)
   }
 
   const previousImage = (event) => {
-    karusell.value.go('-' + perPage.value)
+    karusell.value?.go('-' + perPage.value)
   }
 
   const karusell = ref(null)
@@ -172,11 +129,14 @@ const { t } = useI18n()
 
   onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
-  const switchTab = (tab) => {
-    activeTab.value = tab
+  const switchTab = async (index) => {
+    activeIndex.value = index
     currentThumbnail.value = 0
     currentImageIndex.value = 0
-    karusell.value.go(0)
+    // Wait for Splide to re-render the new slide set before rewinding, or the
+    // index is clamped against the previous category's length.
+    await nextTick()
+    karusell.value?.go(0)
   }
 </script>
 
@@ -195,8 +155,8 @@ const { t } = useI18n()
       class="lightbox-main"
       @splide:move="onGalleryMove"
     >
-      <SplideSlide v-for="(slide, index) in activeImages" :key="index">
-        <img :src="slide" :alt="slide" />
+      <SplideSlide v-for="slide in activeImages" :key="slide.id">
+        <img :src="slide.url" :alt="categoryName(activeCategory)" />
       </SplideSlide>
     </Splide>
 
@@ -207,13 +167,17 @@ const { t } = useI18n()
       @splide:mounted="onThumbsReady"
       class="lightbox-thumbs mt-3 flex justify-center"
     >
-      <SplideSlide v-for="(slide, index) in activeImages" :key="index">
-        <img :src="slide" :alt="slide" />
+      <SplideSlide v-for="slide in activeImages" :key="slide.id">
+        <img :src="slide.url" :alt="categoryName(activeCategory)" />
       </SplideSlide>
     </Splide>
   </Dialog>
 
-  <div class="py-10 md:py-14 max-w-screen-xl mx-auto px-3 md:px-5" id="galerii">
+  <div
+    v-if="categories.length"
+    class="py-10 md:py-14 max-w-screen-xl mx-auto px-3 md:px-5"
+    id="galerii"
+  >
     <!-- Galerii header -->
     <div class="sm:flex-row flex flex-col gap-6">
       <div class="w-full sm:w-[65%] space-y-4">
@@ -250,45 +214,17 @@ const { t } = useI18n()
     </div>
     <!-- Tabs -->
     <div>
-      <ul class="flex gap-6 mt-6">
+      <ul class="flex gap-6 mt-6 flex-wrap">
         <li
+          v-for="(category, index) in categories"
+          :key="category.id"
           :class="{
-            'active text-primary-700': activeTab === 'Hoonest',
-          }"
-          class="font-bold text-primary-600 cursor-pointer tab"
-          @click="switchTab('Hoonest')"
-        >
-          {{$t('Hoonest')}}
-          <span class="indicator"></span>
-        </li>
-        <li
-          :class="{
-            'active text-primary-700': activeTab === 'Umbruskond',
+            'active text-primary-700': activeIndex === index,
           }"
           class="font-bold text-primary-500 cursor-pointer tab"
-          @click="switchTab('Umbruskond')"
+          @click="switchTab(index)"
         >
-          {{$t('Ümbruskond')}}
-          <span class="indicator"></span>
-        </li>
-        <li
-          :class="{
-            'active text-primary-700': activeTab === 'Interior',
-          }"
-          class="font-bold text-primary-500 cursor-pointer tab"
-          @click="switchTab('Interior')"
-        >
-          {{$t('Interjöör')}}
-          <span class="indicator"></span>
-        </li>
-        <li
-          :class="{
-            'active text-primary-700': activeTab === 'Ehitus',
-          }"
-          class="font-bold text-primary-500 cursor-pointer tab"
-          @click="switchTab('Ehitus')"
-        >
-          {{$t('Ehitus')}}
+          {{ categoryName(category) }}
           <span class="indicator"></span>
         </li>
       </ul>
@@ -317,10 +253,10 @@ const { t } = useI18n()
       @splide:mounted="onUpdated"
       @splide:refresh="onRefresh"
     >
-      <SplideSlide v-for="(image, index) in activeImages">
+      <SplideSlide v-for="(image, index) in activeImages" :key="image.id">
         <img
-          :src="image"
-          :alt="image"
+          :src="image.url"
+          :alt="categoryName(activeCategory)"
           class="object-cover aspect-[3/2] w-full cursor-pointer"
           @click="clickImage(image, index)"
         />

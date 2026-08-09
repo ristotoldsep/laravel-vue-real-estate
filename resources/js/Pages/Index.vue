@@ -7,6 +7,11 @@
 
   const { t } = useI18n()
 
+  defineProps({
+    heroImages: { type: Array, default: () => [] },
+    galleryCategories: { type: Array, default: () => [] },
+  })
+
   const form = useForm({
     selectedOption: 'korterid',
     email: '',
@@ -48,7 +53,7 @@
         <p class="">
           {{
             $t(
-              'Uus tasand ja kõrgus Loo alevikus on varsti teoks saamas. Otse aleviku südames, aadressil Saha tee 8, kerkib piirkonna kõrgeim maamärk – elegantne kortermaja, kus on mugavad, kaasaegsed ja turvalised kodud. Esimesel ja teisel korrusel leiavad koha valitud ärid ja teenused, mis rikastavad elukeskkonda positiivselt. Maja valmib 2026. aasta kevadel.'
+              'Uus tasand ja kõrgus Loo alevikus on teoks saanud. Otse aleviku südames, aadressil Saha tee 8, kerkib piirkonna kõrgeim maamärk – elegantne kortermaja, kus on mugavad, kaasaegsed ja turvalised kodud. Esimesel ja teisel korrusel leiavad koha valitud ärid ja teenused, mis rikastavad elukeskkonda positiivselt. Maja on valmis!'
             )
           }}
         </p>
@@ -113,7 +118,7 @@
       </div>
 
       <!-- Right - Slideshow -->
-      <heroSlideshow />
+      <heroSlideshow :images="heroImages" />
     </div>
     <!-- Numbers -->
     <Vahemaad />
@@ -201,7 +206,7 @@
     </div>
     <!-- Galerii -->
 
-    <ImageCarousel />
+    <ImageCarousel :categories="galleryCategories" />
     <!-- Ajatelg -->
     <Ajatelg />
     <!-- Asukoht -->

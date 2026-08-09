@@ -1,6 +1,10 @@
 <script setup>
 import { Head } from "@inertiajs/vue3";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+
+defineProps({
+    galleryCategories: { type: Array, default: () => [] },
+});
 </script>
 
 <template>
@@ -17,7 +21,7 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
             />
         </section>
         <Vahemaad />
-        <ImageCarousel />
+        <ImageCarousel :categories="galleryCategories" />
         <section class="border-y border-primary-100">
             <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2028.9410752196486!2d24.943737377489462!3d59.4340573026329!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4692ec370e8cb367%3A0xb6171443008d5ae3!2sSaha%20tee%208%2C%20Loo%2C%2074201%20Harju%20maakond!5e0!3m2!1sen!2see!4v1721663823158!5m2!1sen!2see"

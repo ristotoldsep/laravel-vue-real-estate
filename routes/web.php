@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Models\Apartment;
+use App\Models\GalleryCategory;
 use App\Notifications\ContactFormSubmission;
 use Butschster\Head\Facades\Meta;
 use Illuminate\Foundation\Application;
@@ -14,6 +15,9 @@ use NZTim\Mailchimp\MailchimpFacade as Mailchimp;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +30,9 @@ use Illuminate\Support\Facades\Lang;
 |
 */
 
+// Any page rendering <ImageCarousel /> must pass galleryCategories, and the
+// homepage must also pass heroImages — a missing prop renders an empty gallery
+// silently rather than erroring.
 Route::localized(function () {
     Route::get('/', function () {
         $og = new Butschster\Head\Packages\Entities\OpenGraphPackage('fb');
@@ -33,7 +40,7 @@ Route::localized(function () {
         $og->setType('website')
             ->setSiteName('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
             ->setTitle('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
-            ->setDescription('Energias��ästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!')
+            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!')
             ->setUrl(url('/'));
 
         $og->addImage('https://uusloo.hausers.ee/uus-loo-sotsmeedia.png');
@@ -41,12 +48,15 @@ Route::localized(function () {
         Meta::registerPackage($og);
 
         Meta::setDescription(
-            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!'
+            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!'
         )->setKeywords(
             ['Loo alevik', 'Hausers', 'Uusarendus', 'Korterid', 'Äripinnad', 'Energiasäästlik', 'Kaasaegne', 'Korter', 'Äripind', 'Tallinn', 'Harjumaa', 'Eesti', 'Uus Loo',]
         );
 
-        return Inertia::render('Index');
+        return Inertia::render('Index', [
+            'heroImages' => GalleryCategory::heroImages(),
+            'galleryCategories' => GalleryCategory::carouselPayload(),
+        ]);
     })->name('avaleht');
 
     Route::get(Lang::uri('/ehitusinfo'), function () {
@@ -55,7 +65,7 @@ Route::localized(function () {
         $og->setType('website')
             ->setSiteName('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
             ->setTitle('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
-            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!')
+            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!')
             ->setUrl(url('/'));
 
         $og->addImage('https://uusloo.hausers.ee/uus-loo-sotsmeedia.png');
@@ -63,7 +73,7 @@ Route::localized(function () {
         Meta::registerPackage($og);
 
         Meta::setDescription(
-            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!'
+            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!'
         )->setKeywords(
             ['Loo alevik', 'Hausers', 'Uusarendus', 'Korterid', 'Äripinnad', 'Energiasäästlik', 'Kaasaegne', 'Korter', 'Äripind', 'Tallinn', 'Harjumaa', 'Eesti', 'Uus Loo',]
         );
@@ -77,7 +87,7 @@ Route::localized(function () {
         $og->setType('website')
             ->setSiteName('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
             ->setTitle('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
-            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!')
+            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!')
             ->setUrl(url('/'));
 
         $og->addImage('https://uusloo.hausers.ee/uus-loo-sotsmeedia.png');
@@ -85,7 +95,7 @@ Route::localized(function () {
         Meta::registerPackage($og);
 
         Meta::setDescription(
-            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!'
+            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!'
         )->setKeywords(
             ['Loo alevik', 'Hausers', 'Uusarendus', 'Korterid', 'Äripinnad', 'Energiasäästlik', 'Kaasaegne', 'Korter', 'Äripind', 'Tallinn', 'Harjumaa', 'Eesti', 'Uus Loo',]
         );
@@ -99,7 +109,7 @@ Route::localized(function () {
         $og->setType('website')
             ->setSiteName('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
             ->setTitle('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
-            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!')
+            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!')
             ->setUrl(url('/'));
 
         $og->addImage('https://uusloo.hausers.ee/uus-loo-sotsmeedia.png');
@@ -107,7 +117,7 @@ Route::localized(function () {
         Meta::registerPackage($og);
 
         Meta::setDescription(
-            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!'
+            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!'
         )->setKeywords(
             ['Loo alevik', 'Hausers', 'Uusarendus', 'Korterid', 'Äripinnad', 'Energiasäästlik', 'Kaasaegne', 'Korter', 'Äripind', 'Tallinn', 'Harjumaa', 'Eesti', 'Uus Loo',]
         );
@@ -121,7 +131,7 @@ Route::localized(function () {
         $og->setType('website')
             ->setSiteName('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
             ->setTitle('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
-            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!')
+            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!')
             ->setUrl(url('/'));
 
         $og->addImage('https://uusloo.hausers.ee/uus-loo-sotsmeedia.png');
@@ -129,7 +139,7 @@ Route::localized(function () {
         Meta::registerPackage($og);
 
         Meta::setDescription(
-            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!'
+            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!'
         )->setKeywords(
             ['Loo alevik', 'Hausers', 'Uusarendus', 'Korterid', 'Äripinnad', 'Energiasäästlik', 'Kaasaegne', 'Korter', 'Äripind', 'Tallinn', 'Harjumaa', 'Eesti', 'Uus Loo',]
         );
@@ -150,7 +160,7 @@ Route::localized(function () {
         $og->setType('website')
             ->setSiteName('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
             ->setTitle('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
-            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!')
+            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!')
             ->setUrl(url('/'));
 
         $og->addImage('https://uusloo.hausers.ee/uus-loo-sotsmeedia.png');
@@ -158,12 +168,14 @@ Route::localized(function () {
         Meta::registerPackage($og);
 
         Meta::setDescription(
-            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!'
+            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!'
         )->setKeywords(
             ['Loo alevik', 'Hausers', 'Uusarendus', 'Korterid', 'Äripinnad', 'Energiasäästlik', 'Kaasaegne', 'Korter', 'Äripind', 'Tallinn', 'Harjumaa', 'Eesti', 'Uus Loo',]
         );
 
-        return Inertia::render('Asukoht');
+        return Inertia::render('Asukoht', [
+            'galleryCategories' => GalleryCategory::carouselPayload(),
+        ]);
     })->name('asukoht');
 
     Route::get(Lang::uri('/galerii'), function () {
@@ -172,7 +184,7 @@ Route::localized(function () {
         $og->setType('website')
             ->setSiteName('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
             ->setTitle('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
-            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!')
+            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!')
             ->setUrl(url('/'));
 
         $og->addImage('https://uusloo.hausers.ee/uus-loo-sotsmeedia.png');
@@ -180,12 +192,14 @@ Route::localized(function () {
         Meta::registerPackage($og);
 
         Meta::setDescription(
-            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!'
+            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!'
         )->setKeywords(
             ['Loo alevik', 'Hausers', 'Uusarendus', 'Korterid', 'Äripinnad', 'Energiasäästlik', 'Kaasaegne', 'Korter', 'Äripind', 'Tallinn', 'Harjumaa', 'Eesti', 'Uus Loo',]
         );
 
-        return Inertia::render('Galerii');
+        return Inertia::render('Galerii', [
+            'galleryCategories' => GalleryCategory::carouselPayload(),
+        ]);
     })->name('galerii');
 
     Route::get(Lang::uri('/muugiinfo'), function () {
@@ -194,7 +208,7 @@ Route::localized(function () {
         $og->setType('website')
             ->setSiteName('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
             ->setTitle('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
-            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!')
+            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!')
             ->setUrl(url('/'));
 
         $og->addImage('https://uusloo.hausers.ee/uus-loo-sotsmeedia.png');
@@ -202,7 +216,7 @@ Route::localized(function () {
         Meta::registerPackage($og);
 
         Meta::setDescription(
-            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!'
+            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!'
         )->setKeywords(
             ['Loo alevik', 'Hausers', 'Uusarendus', 'Korterid', 'Äripinnad', 'Energiasäästlik', 'Kaasaegne', 'Korter', 'Äripind', 'Tallinn', 'Harjumaa', 'Eesti', 'Uus Loo',]
         );
@@ -222,7 +236,7 @@ Route::localized(function () {
         $og->setType('website')
             ->setSiteName('Uus Loo uusarendus - Korterid ja Äripinnad Loo alevikus')
             ->setTitle("Korter {$apartment->number} | Uus Loo uusarendus")
-            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!')
+            ->setDescription('Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!')
             ->setUrl(url()->current());
 
         $og->addImage('https://uusloo.hausers.ee/uus-loo-sotsmeedia.png');
@@ -230,7 +244,7 @@ Route::localized(function () {
         Meta::registerPackage($og);
 
         Meta::setDescription(
-            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Valmimine 2025. a sügisel. Registreeri huvi!'
+            'Energiasäästlikud ja kaasaegsed korterid ning äripinnad otse Loo aleviku südames. Maja on valmis! Registreeri huvi!'
         )->setKeywords(
             ['Loo alevik', 'Hausers', 'Uusarendus', 'Korterid', 'Äripinnad', 'Energiasäästlik', 'Kaasaegne', 'Korter', 'Äripind', 'Tallinn', 'Harjumaa', 'Eesti', 'Uus Loo',]
         );
@@ -401,6 +415,125 @@ Route::middleware('auth')->group(function () {
 
         return redirect()->route('dashboard')->with('success', 'Apartment deleted!');
     })->name('apartment.delete');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Galerii haldus
+    |--------------------------------------------------------------------------
+    |
+    | Deliberately here rather than in routes/api.php like the apartment gallery:
+    | the "api" middleware group has no StartSession (see app/Http/Kernel.php),
+    | so `auth` cannot work there. Living in the web group gives these endpoints
+    | session auth and CSRF for free.
+    |
+    */
+    Route::get('/admin/gallery', function () {
+        return Inertia::render('Admin/Gallery', [
+            'hero' => GalleryCategory::hero()->toPayload(),
+            'categories' => GalleryCategory::carouselPayload(),
+        ]);
+    })->name('admin.gallery');
+
+    Route::post('/admin/gallery/categories', function () {
+        GalleryCategory::create([
+            'type' => GalleryCategory::TYPE_CAROUSEL,
+            'name_et' => 'Uus kategooria',
+            'sort_order' => (int) GalleryCategory::carousel()->max('sort_order') + 1,
+        ]);
+
+        return back();
+    })->name('admin.gallery.category.create');
+
+    Route::post('/admin/gallery/categories/reorder', function (Request $request) {
+        $ids = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer',
+        ])['ids'];
+
+        // Scope to carousel categories so the hero row can't be dragged into the list.
+        $valid = GalleryCategory::where('type', GalleryCategory::TYPE_CAROUSEL)
+            ->whereIn('id', $ids)
+            ->pluck('id')
+            ->all();
+
+        foreach (array_values(array_filter($ids, fn ($id) => in_array($id, $valid))) as $position => $id) {
+            GalleryCategory::where('id', $id)->update(['sort_order' => $position]);
+        }
+
+        return back();
+    })->name('admin.gallery.category.reorder');
+
+    Route::post('/admin/gallery/categories/{category}', function (Request $request, GalleryCategory $category) {
+        $category->update($request->validate([
+            'name_et' => 'nullable|string|max:255',
+            'name_en' => 'nullable|string|max:255',
+            'name_ru' => 'nullable|string|max:255',
+        ]));
+
+        return back();
+    })->name('admin.gallery.category.update');
+
+    Route::delete('/admin/gallery/categories/{category}', function (GalleryCategory $category) {
+        // The hero row backs the homepage slideshow and has no re-create path in the UI.
+        abort_if($category->type === GalleryCategory::TYPE_HERO, 403);
+
+        $category->delete();
+
+        return back();
+    })->name('admin.gallery.category.delete');
+
+    Route::post('/admin/gallery/{category}/images', function (Request $request, GalleryCategory $category) {
+        $request->validate([
+            'file' => 'required',
+            'file.*' => 'image|mimes:jpeg,png,jpg,webp,gif|max:10000000',
+        ]);
+
+        $uploaded = $request->file('file');
+        $files = is_array($uploaded) ? $uploaded : [$uploaded];
+
+        foreach ($files as $file) {
+            $contents = file_get_contents($file->getRealPath());
+            $name = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+
+            // Same treatment as the apartment gallery: downscale for the web,
+            // convert to WebP. No trim/blend — those are for plan PNGs.
+            $image = Image::read($contents)->scaleDown(width: 1920);
+
+            $category->addMediaFromString((string) $image->toWebp(80))
+                ->usingFileName($name . '_' . Str::random(6) . '.webp')
+                ->toMediaCollection(GalleryCategory::COLLECTION);
+        }
+
+        return response()->json(['count' => count($files)]);
+    })->name('admin.gallery.images.upload');
+
+    Route::post('/admin/gallery/{category}/images/reorder', function (Request $request, GalleryCategory $category) {
+        $ids = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer',
+        ])['ids'];
+
+        // Media::setNewOrder is an unscoped whereIn, so filter to this category first.
+        $valid = $category->media()
+            ->where('collection_name', GalleryCategory::COLLECTION)
+            ->whereIn('id', $ids)
+            ->pluck('id')
+            ->all();
+
+        Media::setNewOrder(array_values(array_filter($ids, fn ($id) => in_array($id, $valid))));
+
+        return back();
+    })->name('admin.gallery.images.reorder');
+
+    Route::delete('/admin/gallery/{category}/images/{media}', function (GalleryCategory $category, $media) {
+        $category->media()
+            ->where('collection_name', GalleryCategory::COLLECTION)
+            ->where('id', $media)
+            ->firstOrFail()
+            ->delete();
+
+        return back();
+    })->name('admin.gallery.images.delete');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

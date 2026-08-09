@@ -1,22 +1,41 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
+
+// Managed from the admin panel (Galerii -> Esilehe slaidid). The fallback keeps
+// the slideshow rendering if the route forgets to pass the prop.
+const props = defineProps({
+    images: {
+        type: Array,
+        default: () => [
+            { id: "c1", url: "/images/renderid/saha-8_c1.webp" },
+            { id: "c2", url: "/images/renderid/saha-8_c2.webp" },
+            { id: "c3", url: "/images/renderid/saha-8_c3.webp" },
+            { id: "c4", url: "/images/renderid/saha-8_c4.webp" },
+            { id: "c7", url: "/images/renderid/saha-8_c7.webp" },
+            { id: "c8", url: "/images/renderid/saha-8_c8.webp" },
+            { id: "c9", url: "/images/renderid/saha-8_c9.webp" },
+            { id: "c10", url: "/images/renderid/saha-8_c10.webp" },
+        ],
+    },
+});
 
 const currentImageIndex = ref(0);
-const images = ref([
-    "/images/renderid/saha-8_c1.webp",
-    "/images/renderid/saha-8_c2.webp",
-    "/images/renderid/saha-8_c3.webp",
-    "/images/renderid/saha-8_c4.webp",
-    "/images/renderid/saha-8_c7.webp",
-    "/images/renderid/saha-8_c8.webp",
-    "/images/renderid/saha-8_c9.webp",
-    "/images/renderid/saha-8_c10.webp",
-]);
+
+const images = computed(() =>
+    props.images?.length ? props.images : []
+);
 
 const currentImage = computed(() => images.value[currentImageIndex.value]);
 
+// An image removed in the admin can leave the index past the end.
+watch(images, (list) => {
+    if (currentImageIndex.value > list.length - 1) currentImageIndex.value = 0;
+});
+
 function nextImage() {
+    if (!images.value.length) return;
+
     if (currentImageIndex.value < images.value.length - 1) {
         currentImageIndex.value++;
     } else {
@@ -25,6 +44,8 @@ function nextImage() {
 }
 
 function previousImage() {
+    if (!images.value.length) return;
+
     if (currentImageIndex.value > 0) {
         currentImageIndex.value--;
     } else {
@@ -34,7 +55,7 @@ function previousImage() {
 </script>
 
 <template>
-    <div class="w-full relative">
+    <div v-if="images.length" class="w-full relative">
         <div class="relative z-10">
             <!-- Slideshow images -->
             <transition-group
@@ -45,9 +66,9 @@ function previousImage() {
             >
                 <img
                     class="aspect-ratio-box-inside"
-                    :src="currentImage"
+                    :src="currentImage.url"
                     alt="Uus Loo Hausers uusarendus"
-                    :key="currentImage"
+                    :key="currentImage.url"
                 />
             </transition-group>
 
@@ -60,7 +81,7 @@ function previousImage() {
                         Uus Loo
                     </h6>
                     <h6 class="font-bold text-xl sm:text-2xl leading-none">
-                        {{$t('Valmib 2026')}}
+                        {{$t('Maja on valmis!')}}
                     </h6>
                 </div>
                 <div class="flex items-center justify-between w-[40%]">
