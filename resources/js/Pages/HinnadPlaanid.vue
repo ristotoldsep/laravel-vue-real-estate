@@ -110,7 +110,7 @@
     router.get(route('korteri-detail', { number: event.data.number }))
   }
 
-  const checked = ref(true)
+  const checked = ref(false)
 
   const roomType = ref([])
 
